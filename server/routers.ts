@@ -6,14 +6,38 @@ import { z } from "zod";
 import { spawn } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// ─── Resolve the best available Python interpreter ───────────────────────────
+function resolvePython(): string {
+  const mlDir = path.join(__dirname, "ml");
+  const candidates = [
+    path.join(mlDir, ".venv313", "bin", "python"),   // venv with all packages
+    path.join(mlDir, ".venv313", "bin", "python3"),
+    "/usr/bin/python3.11",
+    "/usr/bin/python3",
+    "python3.11",
+    "python3",
+  ];
+  for (const c of candidates) {
+    if (c.startsWith("/")) {
+      if (fs.existsSync(c)) return c;
+    } else {
+      return c; // PATH-based, let OS resolve
+    }
+  }
+  return "python3";
+}
+
+const PYTHON_BIN = resolvePython();
 
 // ─── ML prediction helper ────────────────────────────────────────────────────
 function runPrediction(strength: number, age: number): Promise<PredictResult> {
   return new Promise((resolve, reject) => {
     const scriptPath = path.join(__dirname, "ml", "predict.py");
-    const proc = spawn("python3.11", [scriptPath]);
+    const proc = spawn(PYTHON_BIN, [scriptPath]);
     let stdout = "";
     let stderr = "";
     proc.stdout.on("data", (d) => (stdout += d.toString()));

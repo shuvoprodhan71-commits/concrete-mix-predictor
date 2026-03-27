@@ -115,3 +115,6 @@ client/public/__manus__/version.json
 # Large ML model files - downloaded from CDN at runtime
 server/ml/inv_models.pkl
 server/ml/forward_model.pkl
+
+# Python venv for ML inference
+server/ml/.venv313/

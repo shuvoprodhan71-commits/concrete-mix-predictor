@@ -21,4 +21,7 @@
 
 ## Testing
 - [x] Vitest test for predict procedure
-- [ ] Checkpoint and delivery
+- [x] Checkpoint and delivery
+
+## Bug Fixes
+- [x] Fix Python version mismatch: server calls python3.11 but deployed env uses python3.13
