@@ -25,3 +25,13 @@
 
 ## Bug Fixes
 - [x] Fix Python version mismatch: server calls python3.11 but deployed env uses python3.13
+
+## Railway Deployment
+- [x] Create Dockerfile with Node.js + Python 3 support
+- [x] Remove Manus OAuth dependency from server and frontend
+- [x] Add simple username/password auth (bcrypt + JWT)
+- [x] Create .env.example for Railway environment variables
+- [x] Add railway.json config file
+- [x] Update frontend to remove Manus-specific login UI
+- [x] Test production build locally
+- [x] Package and deliver Railway-ready ZIP
