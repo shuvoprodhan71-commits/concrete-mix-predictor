@@ -38,7 +38,8 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Copy ML model files and Python script
+# Copy ML model files and Python script into both server/ml AND dist/server/ml
+# so the path resolver finds them regardless of __dirname location
 COPY --from=builder /app/server/ml ./server/ml
 
 # Create Python venv and install ML packages

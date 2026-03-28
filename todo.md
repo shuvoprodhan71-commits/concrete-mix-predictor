@@ -35,3 +35,6 @@
 - [x] Update frontend to remove Manus-specific login UI
 - [x] Test production build locally
 - [x] Package and deliver Railway-ready ZIP
+
+## Bug Fixes (Round 2)
+- [x] Fix ML path: production dist/__dirname resolves to /app/dist/ not /app/server/ml/

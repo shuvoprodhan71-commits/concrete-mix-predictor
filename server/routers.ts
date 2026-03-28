@@ -10,9 +10,28 @@ import fs from "fs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// ─── Resolve ML directory (works in both dev and production) ─────────────────
+// In dev:  __dirname = .../server/       → server/ml
+// In prod: __dirname = .../dist/         → ../server/ml  OR  process.cwd()/server/ml
+function resolveMLDir(): string {
+  // Try __dirname/ml first (dev mode)
+  const devPath = path.join(__dirname, "ml");
+  if (fs.existsSync(path.join(devPath, "predict.py"))) return devPath;
+  // Try one level up from __dirname (e.g. dist/../server/ml)
+  const upPath = path.join(__dirname, "..", "server", "ml");
+  if (fs.existsSync(path.join(upPath, "predict.py"))) return upPath;
+  // Try from process.cwd() (Railway/Docker: /app/server/ml)
+  const cwdPath = path.join(process.cwd(), "server", "ml");
+  if (fs.existsSync(path.join(cwdPath, "predict.py"))) return cwdPath;
+  // Fallback
+  return devPath;
+}
+
+const ML_DIR = resolveMLDir();
+
 // ─── Resolve the best available Python interpreter ───────────────────────────
 function resolvePython(): string {
-  const mlDir = path.join(__dirname, "ml");
+  const mlDir = ML_DIR;
   const candidates = [
     path.join(mlDir, ".venv313", "bin", "python"),   // venv with all packages
     path.join(mlDir, ".venv313", "bin", "python3"),
@@ -36,7 +55,7 @@ const PYTHON_BIN = resolvePython();
 // ─── ML prediction helper ────────────────────────────────────────────────────
 function runPrediction(strength: number, age: number): Promise<PredictResult> {
   return new Promise((resolve, reject) => {
-    const scriptPath = path.join(__dirname, "ml", "predict.py");
+    const scriptPath = path.join(ML_DIR, "predict.py");
     const proc = spawn(PYTHON_BIN, [scriptPath]);
     let stdout = "";
     let stderr = "";
